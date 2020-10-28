@@ -4,43 +4,28 @@ using UnityEngine;
 
 public class MasterAd
 {
-    ///list of all ad services
-    private List<IAdService> adServices;
+    /// <summary>
+    /// Service manager to handle service switching in desired way
+    /// </summary>
+    private IServiceManager serviceManager;
 
-    ///the current using service in above list
-    private int servicePointer;
 
-    public MasterAd()
+    /// <summary>
+    /// Injecting IServiceManager to MasterAd class via its constructor
+    /// </summary>
+    /// <param name="serviceManager"></param>
+    public MasterAd(IServiceManager serviceManager)
     {
-        adServices = new List<IAdService>();
+        this.serviceManager = serviceManager;
     }
 
     /// <summary>
-    /// Adds an Ad Service for further use
+    /// using service manager to add Ad service
     /// </summary>
     /// <param name="adService"></param>
     public void AddService(IAdService adService)
     {
-        adService.Init();
-
-        adServices.Add(adService);
-    }
-
-    /// <summary>
-    /// Whenever an Ad Service fails to load ad, this method switches the service
-    /// </summary>
-    private void SwitchService()
-    {
-        servicePointer = (servicePointer + 1) % adServices.Count;
-    }
-
-    /// <summary>
-    /// It returns the current using service
-    /// </summary>
-    /// <returns></returns>
-    private IAdService GetService()
-    {
-        return adServices[servicePointer];
+        serviceManager.AddService(adService);
     }
 
     /// <summary>
@@ -50,9 +35,9 @@ public class MasterAd
     /// <param name="onLoaded"></param>
     public void LoadAd(string name, Action onLoaded)
     {
-        GetService().Load(name, () => { onLoaded?.Invoke(); }, () =>
+        serviceManager.GetService().Load(name, () => { onLoaded?.Invoke(); }, () =>
         {
-            SwitchService();
+            serviceManager.SwitchService();
             LoadAd(name, onLoaded);
         });
     }
@@ -64,8 +49,8 @@ public class MasterAd
     /// <param name="onFinished"></param>
     public void ShowAd(string name, Action onFinished)
     {
-        if (GetService().Ready(name))
-            GetService().Show(name, () => { onFinished?.Invoke(); });
+        if (serviceManager.GetService().Ready(name))
+            serviceManager.GetService().Show(name, () => { onFinished?.Invoke(); });
     }
 
     /// <summary>
@@ -74,6 +59,6 @@ public class MasterAd
     /// <param name="name"></param>
     public void DestroyAd(string name)
     {
-        GetService().Destroy(name);
+        serviceManager.GetService().Destroy(name);
     }
 }

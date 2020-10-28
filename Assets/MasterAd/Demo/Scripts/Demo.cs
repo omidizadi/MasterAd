@@ -18,12 +18,12 @@ public class Demo : MonoBehaviour
         MobileAds.Initialize(initStatus => { });
         Advertisement.Initialize("123456", true);
 
-        banner = new MasterAd();
+        banner = new MasterAd(new ServiceSwitcher());
         banner.AddService(new UnityAdsBanner());
         banner.AddService(new AdmobBanner());
 
 
-        interstitial = new MasterAd();
+        interstitial = new MasterAd(new ServiceSwitcher());
         interstitial.AddService(new DummyOneInterstitial());
         interstitial.AddService(new DummyTwoInterstitial());
     }
