@@ -426,7 +426,3 @@ public class Demo : MonoBehaviour
 ```
 
 After this, whenever I call *LoadBanner *the *MasterAd *class tries to load the ad from the current service and if it fails, it automatically switches to another service and does the same thing until one service answers. And when I call *ShowBanner *it will show the ad after checking if the ad was loaded. This functionality works for most ad services and formats.
-
-Make sure to check it out and feel free to add any comments.
-
-Thank you for your time.
